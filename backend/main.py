@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 import os
 from urllib.parse import urlencode
 import json
+import pytesseract
+from PIL import Image
 
 # Load the .env file
 load_dotenv()
@@ -14,6 +16,7 @@ load_dotenv()
 app = FastAPI()
 
 @app.get("/")
+
 def read_root():    
     return {"Item": "Price"}
 
@@ -36,6 +39,7 @@ async def read_item():
         return {'error': 'Failed to fetch data'}
     return response.json()
 
+
 @app.get("/item/{item}")
 def retrieve_item(item: str):
     response = requests.get('https://fakestoreapi.com/products')
@@ -45,6 +49,18 @@ def retrieve_item(item: str):
     ]
     
     return filtered_products
+
+# Pytesseract (Image to text)
+image_input = "public/avocado_oil.jpeg"
+price_tag = Image.open(image_input)
+
+grayscale_image = price_tag.convert("L")
+threshold_value = 150 
+binary_image = grayscale_image.point(
+    lambda x: 0 if x < threshold_value else 255, '1')
+resized_image = binary_image.resize((price_tag.width * 11, price_tag.height * 11))
+
+text = pytesseract.image_to_string(resized_image, config='--psm 11')
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, reload=True)
