@@ -14,8 +14,8 @@ load_dotenv()
 app = FastAPI()
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+def read_root():    
+    return {"Item": "Price"}
 
 @app.get("/test")
 async def read_item():
