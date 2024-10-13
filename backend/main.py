@@ -52,7 +52,7 @@ def retrieve_item(item: str):
 
 # Pytesseract (Image to text)
 @app.get("/image_to_text")
-def image_to_text(image_input) -> None:
+def image_to_text(image_input: Optional[Image]) -> None:
     price_tag = Image.open(image_input)
 
     grayscale_image = price_tag.convert("L")
